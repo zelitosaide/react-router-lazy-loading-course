@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  createBrowserRouter,
+  RouterProvider
+} from "react-router-dom";
 
-function App() {
+import { Home } from "./Home";
+import { Layout } from "./Layout";
+import { NoMatch } from "./NoMatch";
+
+const About = React.lazy(function () {
+  return import("./About");
+});
+
+const Dashboard = React.lazy(function () {
+  return import("./Dashboard");
+});
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Home />
+      },
+      {
+        path: "about",
+        element: (
+          <React.Suspense fallback={<>....</>}>
+            <About />
+          </React.Suspense>
+        )
+      },
+      {
+        path: "dashboard/*",
+        element: (
+          <React.Suspense fallback={<>....</>}>
+            <Dashboard />
+          </React.Suspense>
+        )
+      },
+      {
+        path: "*",
+        element: <NoMatch />
+      }
+    ]
+  }
+]);
+
+export function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Lazy loading Example</h1>
+      <RouterProvider router={router} />
     </div>
   );
 }
-
-export default App;
